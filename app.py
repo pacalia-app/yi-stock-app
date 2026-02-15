@@ -64,7 +64,7 @@ with st.sidebar:
     st.write(f"현재 적용 환율: 1$ = {exchange_rate:,.2f}원")
 
 # 5. 메인 화면 구성
-st.title("📊 실시간 통합 포트폴리오")
+st.title("📊 포트폴리오")
 st.caption(f"최근 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if not portfolio_df.empty:
