@@ -6,17 +6,27 @@ import os
 from datetime import datetime
 
 # 0. 설정 및 환율 정보 가져오기 (Fact: 실시간 환율 반영)
-st.set_page_config(layout="wide", page_title="글로벌 포트폴리오 매니저")
-
-@st.cache_data(ttl=3600) # 환율은 1시간마다 업데이트
 def get_usd_krw():
     try:
-        ex_data = yf.download("USDKRW=X", period="1d")
-        return ex_data['Close'].iloc[-1]
-    except:
-        return 1350.0 # 환율 호출 실패 시 기본값 (주의: 실제와 다를 수 있음)
+        # Ticker를 더 확실한 것으로 변경
+        ex_data = yf.download("USDKRW=X", period="1d", interval="1m")
+        if not ex_data.empty:
+            # 최신 종가를 가져옴
+            val = ex_data['Close'].iloc[-1]
+            if isinstance(val, (int, float)) and val > 0:
+                return float(val)
+        return 1350.0  # 데이터가 비어있을 경우 기본값
+    except Exception:
+        return 1350.0  # 에러 발생 시 기본값
 
+# 함수 호출
 exchange_rate = get_usd_krw()
+
+# 문제의 발생 지점 (안전한 출력 방식으로 변경)
+if isinstance(exchange_rate, (int, float)):
+    st.sidebar.write(f"현재 적용 환율: 1$ = {exchange_rate:,.2f}원")
+else:
+    st.sidebar.write("환율 정보를 불러올 수 없습니다. (기본값 1350원 적용)")
 
 # 자동 업데이트 설정 (300초 = 5분)
 # st.empty()와 연동하여 화면을 주기적으로 새로고침하는 효과를 줍니다.
