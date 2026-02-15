@@ -93,8 +93,17 @@ if not portfolio_df.empty:
             roi = ((curr_p - row["평단가"]) / row["평단가"]) * 100
             
             # 알림 체크 (목표 수익률 도달 여부)
-            if roi >= row["목표수익률"]:
-                alert_list.append(f"🚨 {t} 목표 수익률({row['목표수익률']}%) 달성! (현재: {roi:.2f}%)")
+            # roi와 목표수익률 값을 강제로 단일 숫자(float)로 변환
+             try:
+            # 만약 데이터가 여러 개라면 가장 마지막 것(.iloc[-1])을 가져오고, 아니면 그대로 숫자로 변환
+             current_roi = float(roi.iloc[-1]) if hasattr(roi, 'iloc') else float(roi)
+             target_roi = float(row["목표수익률"])
+
+             if current_roi >= target_roi:
+             alert_list.append(f"🚨 {t} 목표 수익률({target_roi}%) 달성! (현재: {current_roi:.2f}%)")
+             except (TypeError, ValueError, IndexError):
+            # 데이터 변환 실패 시 알림 생략
+             pass
 
             results.append({
                 "종목": t,
