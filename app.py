@@ -105,7 +105,7 @@ except (TypeError, ValueError, IndexError):
     # 데이터 변환 실패 시 알림 생략
     pass
 
-            results.append({
+    results.append({
                 "종목": t,
                 "현재가": f"{curr_p:,.2f}{unit}",
                 "수익률": roi,
